@@ -3,13 +3,36 @@ from SocialNetwork.SocialNetwork import SocialNetwork
 import Post
 
 
+class Observerable:
+
+
+    def __init__(self):
+        self.observers = []
+
+    def register(self, observer):
+        if not observer in self.observers:
+            self.observers.append(observer)
+    
+    def register(self, observer):
+        if observer in self.observers:
+            self.observers.remove(observer)
+    
+    def unregister_all(self):
+        self.observers.clear()
+
+    def update_observers(self, *args, **kwargs):
+        for observer in self.observers:
+            observer.update(*args, **kwargs)
+    
+
+
 class Observer:
-    def update(self, action):
+    def update(self, *args, **kwargs):
         pass
 
 
+
 class User(Observer):
-    log = None
 
     # any new user has username, password
     # also has data - followers and posts
@@ -17,17 +40,43 @@ class User(Observer):
         self.username = username
         self.password = password
         self.followers = set()
-        self.posts = []
-        self.log = None
+        self.following = set()
 
-    def __new__(cls, *args, **kwargs):
-        # Check if the user with the same username already exists
-        existing_user = next((user for user in cls.users if user.username == kwargs.get('username')), None)
-        if existing_user:
-            return existing_user
-        else:
-            return super().__new__(cls)
 
+    
+
+    def follow(self, other_user):
+        self.followers.add(other_user)
+        other_user.following.add(self)
+        print(f"{self.username} started following {other_user.username}")
+        return
+    
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+####################################################### 
     # set the followers the user has
     def follow(self, other_user):
         if other_user != self:
